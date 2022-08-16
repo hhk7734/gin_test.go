@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hhk7734/git-test/internal/config"
+	"github.com/hhk7734/git-test/internal/user_interface/gin/middleware"
 	"go.uber.org/zap"
 )
 
@@ -24,6 +25,9 @@ func main() {
 	initLogger()
 
 	r := gin.New()
+	r.Use(middleware.LoggerWithZap([]string{}))
+	r.Use(middleware.RecoveryWithZap())
+
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", c.Port),
 		Handler:      r,
