@@ -3,7 +3,9 @@ module github.com/hhk7734/git-test
 go 1.18
 
 require (
+	github.com/caarlos0/env/v6 v6.9.3
 	github.com/gin-gonic/gin v1.8.1
+	github.com/joho/godotenv v1.4.0
 	go.uber.org/zap v1.22.0
 )
 

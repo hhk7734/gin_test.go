@@ -1,17 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hhk7734/git-test/internal/config"
 	"go.uber.org/zap"
 )
 
 func main() {
+	config.Init()
+	c := config.Config()
+
 	r := gin.New()
 	s := &http.Server{
-		Addr:         ":8080",
+		Addr:         fmt.Sprintf(":%d", c.Port),
 		Handler:      r,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
