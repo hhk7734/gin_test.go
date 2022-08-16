@@ -21,6 +21,8 @@ func main() {
 	config.Init()
 	c := config.Config()
 
+	initLogger()
+
 	r := gin.New()
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", c.Port),
@@ -31,4 +33,21 @@ func main() {
 	if err := s.ListenAndServe(); err != nil {
 		zap.L().Panic("Server error", zap.Error(err))
 	}
+}
+
+func initLogger() {
+	var l *zap.Logger
+	c := config.Config()
+	if c.Debug {
+		cfg := zap.NewDevelopmentConfig()
+		cfg.DisableStacktrace = true
+		l, _ = cfg.Build()
+	} else {
+		cfg := zap.NewProductionConfig()
+		cfg.EncoderConfig.TimeKey = "time"
+		cfg.DisableStacktrace = true
+		l, _ = cfg.Build()
+	}
+	defer l.Sync()
+	zap.ReplaceGlobals(l)
 }
