@@ -10,6 +10,13 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title       Gin test
+// @version     1.0
+// @description Gin test
+
+// @schemes  http
+// @host     localhost:8080
+// @BasePath /
 func main() {
 	config.Init()
 	c := config.Config()
