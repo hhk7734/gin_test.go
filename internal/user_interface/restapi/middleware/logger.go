@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hhk7734/gin-test/internal/pkg/logger"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 const UserIDKey = "user_id"
@@ -42,38 +42,28 @@ func LoggerWithZap(skipPaths []string) gin.HandlerFunc {
 			}()
 			xRequestID := c.Request.Header.Get("X-Request-Id")
 
+			l := logger.Logger(c.Request.Context()).With(
+				zap.String("method", c.Request.Method),
+				zap.String("url", path),
+				zap.Int("status", c.Writer.Status()),
+				zap.Int64("user_id", userID),
+				zap.String("request_id", xRequestID),
+				zap.String("remote_address", c.ClientIP()),
+				zap.String("user_agent", c.Request.UserAgent()),
+				zap.Duration("latency", latency),
+			)
+
 			if len(c.Errors) > 0 {
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
 				c.Error(fmt.Errorf("%s", httpRequest))
 
 				// 컨텍스트에 저장된 에러
 				for i, e := range c.Errors {
-					fields := []zapcore.Field{
-						zap.String("method", c.Request.Method),
-						zap.String("url", path),
-						zap.Int("status", c.Writer.Status()),
-						zap.Int64("user_id", userID),
-						zap.String("request_id", xRequestID),
-						zap.String("remote_address", c.ClientIP()),
-						zap.String("user_agent", c.Request.UserAgent()),
-						zap.Error(e),
-						zap.Duration("latency", latency),
-					}
-					zap.L().Error(strconv.Itoa(i), fields...)
+					l.Error(strconv.Itoa(i), zap.Error(e))
 				}
 			} else {
 				// 정상 처리
-				fields := []zapcore.Field{
-					zap.String("method", c.Request.Method),
-					zap.String("url", path),
-					zap.Int("status", c.Writer.Status()),
-					zap.Int64("user_id", userID),
-					zap.String("request_id", xRequestID),
-					zap.String("remote_address", c.ClientIP()),
-					zap.String("user_agent", c.Request.UserAgent()),
-					zap.Duration("latency", latency),
-				}
-				zap.L().Info(path, fields...)
+				l.Info(path)
 			}
 		}
 	}
