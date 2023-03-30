@@ -1,9 +1,25 @@
-swag:
-	swag fmt && swag init
-	curl -X POST https://converter.swagger.io/api/convert -d @docs/swagger.json --header 'Content-Type: application/json' > docs/swagger3.json
-	mv docs/swagger3.json docs/swagger.json
+.PHONY: install_wire
+install_wire:
+	go install github.com/google/wire/cmd/wire@latest \
+	&& [ -n "$$(command -v asdf 2>/dev/null)" ] && asdf reshim golang || true
 
+.PHONY: install_package
+install_package:
+	go mod tidy
+
+.PHONY: init
+init: install_package install_wire
+
+.PHONY: remove_local
 remove_local:
 	git remote update --prune
-	git checkout origin/dev
+	git checkout origin/main
 	git for-each-ref --format '%(refname:short)' refs/heads | xargs git branch -D
+
+.PHONY: wire
+wire:
+	wire ./internal/user_interface/restapi
+
+.PHONY: test
+test:
+	go test -cover ./...
