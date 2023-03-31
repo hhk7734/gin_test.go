@@ -1,26 +1,37 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hhk7734/gin-test/internal/config"
 	"github.com/hhk7734/gin-test/internal/user_interface/restapi/middleware"
 	"go.uber.org/zap"
 )
 
 func main() {
-	config.Init()
-	c := config.Config()
+	workDir, _ := os.Getwd()
+	for {
+		if _, err := os.Stat(workDir + "/.env"); err == nil {
+			os.Chdir(workDir)
+			break
+		}
+		if workDir == "/" {
+			break
+		}
+		workDir = filepath.Dir(workDir)
+	}
 
 	r := gin.New()
 	r.Use(middleware.LoggerWithZap([]string{}))
 	r.Use(middleware.RecoveryWithZap())
 
+	r.StaticFile("/openapi.yaml", "web/static/openapi.yaml")
+
 	s := &http.Server{
-		Addr:         fmt.Sprintf(":%d", c.Port),
+		Addr:         ":8080",
 		Handler:      r,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
