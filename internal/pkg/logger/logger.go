@@ -90,21 +90,19 @@ func Logger(ctx context.Context) *zap.Logger {
 }
 
 func WithFields(ctx context.Context, fields ...zap.Field) context.Context {
-	v := ctx.Value(filedsMapKey{})
-	if v == nil {
-		fm := make(map[string]zap.Field, len(fields))
-		for _, f := range fields {
-			fm[f.Key] = f
+	fieldMap := make(map[string]zap.Field, len(fields))
+
+	if fm := ctx.Value(filedsMapKey{}); fm != nil {
+		for k, v := range fm.(map[string]zap.Field) {
+			fieldMap[k] = v
 		}
-		return context.WithValue(ctx, filedsMapKey{}, fm)
 	}
 
-	fm := v.(map[string]zap.Field)
 	for _, f := range fields {
-		fm[f.Key] = f
+		fieldMap[f.Key] = f
 	}
 
-	return ctx
+	return context.WithValue(ctx, filedsMapKey{}, fieldMap)
 }
 
 func Fields(ctx context.Context) []zap.Field {
