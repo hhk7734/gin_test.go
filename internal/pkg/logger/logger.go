@@ -12,7 +12,9 @@ import (
 )
 
 func init() {
-	SetConfig(NewConfigFromENV())
+	if err := SetConfig(NewConfigFromENV()); err != nil {
+		panic(err)
+	}
 }
 
 type filedsMapKey struct{}
