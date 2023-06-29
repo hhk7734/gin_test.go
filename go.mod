@@ -9,6 +9,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.22.0
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+	gorm.io/gorm v1.25.2
 )
 
 require (
