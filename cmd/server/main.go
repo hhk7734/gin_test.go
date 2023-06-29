@@ -35,7 +35,7 @@ func main() {
 	engin := gin.New()
 	engin.Use(lm.Logger)
 	engin.Use(lm.Recovery)
-	engin.Use((&middleware.RequestIDMiddleware{}).RequestID)
+	engin.Use((&middleware.RequestIDMiddleware{}).RequestID(true))
 
 	engin.GET("/healthz", (&controller.HealthzController{}).Healthz)
 
