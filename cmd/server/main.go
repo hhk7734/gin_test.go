@@ -67,7 +67,7 @@ func main() {
 
 	logger.Logger(context.Background()).Info("shutting down server...")
 
-	wg := sync.WaitGroup{}
+	wg := &sync.WaitGroup{}
 
 	go func() {
 		defer wg.Done()
