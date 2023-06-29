@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hhk7734/gin-test/internal/interface/gin/controller"
+	"github.com/hhk7734/gin-test/internal/interface/gin/middleware"
 	"github.com/hhk7734/gin-test/internal/pkg/logger"
 	"go.uber.org/zap"
 )
@@ -28,11 +30,14 @@ func main() {
 		workDir = filepath.Dir(workDir)
 	}
 
-	lm := logger.GinLoggerMiddleware{}
+	lm := &logger.GinLoggerMiddleware{}
 
 	engin := gin.New()
 	engin.Use(lm.Logger)
 	engin.Use(lm.Recovery)
+	engin.Use((&middleware.RequestIDMiddleware{}).RequestID)
+
+	engin.GET("/healthz", (&controller.HealthzController{}).Healthz)
 
 	engin.StaticFile("/openapi.yaml", "web/static/openapi.yaml")
 
