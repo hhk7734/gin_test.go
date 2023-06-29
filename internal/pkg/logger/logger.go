@@ -8,7 +8,6 @@ import (
 	"github.com/hhk7734/gin-test/internal/pkg/env"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"golang.org/x/exp/maps"
 )
 
 func init() {
@@ -17,7 +16,7 @@ func init() {
 	}
 }
 
-type filedsMapKey struct{}
+type filedsKey struct{}
 
 var zConfig = zap.NewProductionConfig()
 
@@ -92,26 +91,52 @@ func Logger(ctx context.Context) *zap.Logger {
 }
 
 func WithFields(ctx context.Context, fields ...zap.Field) context.Context {
-	fieldMap := make(map[string]zap.Field, len(fields))
-
-	if fm := ctx.Value(filedsMapKey{}); fm != nil {
-		for k, v := range fm.(map[string]zap.Field) {
-			fieldMap[k] = v
-		}
+	if len(fields) == 0 {
+		return ctx
 	}
 
-	for _, f := range fields {
-		fieldMap[f.Key] = f
-	}
-
-	return context.WithValue(ctx, filedsMapKey{}, fieldMap)
+	c := concatFields(Fields(ctx), fields)
+	fs := uniqueFields(c)
+	return context.WithValue(ctx, filedsKey{}, fs)
 }
 
 func Fields(ctx context.Context) []zap.Field {
-	v := ctx.Value(filedsMapKey{})
+	v := ctx.Value(filedsKey{})
 	if v == nil {
 		return nil
 	}
 
-	return maps.Values(v.(map[string]zap.Field))
+	return v.([]zap.Field)
+}
+
+func concatFields(a []zap.Field, b []zap.Field) []zap.Field {
+	if a == nil {
+		return b
+	}
+	if b == nil {
+		return a
+	}
+
+	c := make([]zap.Field, len(a)+len(b))
+	copy(c, a)
+	copy(c[len(a):], b)
+	return c
+}
+
+func uniqueFields(fields []zap.Field) []zap.Field {
+	keyToIndex := make(map[string]int, len(fields))
+	newFields := make([]zap.Field, 0, len(fields))
+
+	i := 0
+	for _, v := range fields {
+		if j, ok := keyToIndex[v.Key]; ok {
+			newFields[j] = v
+			continue
+		}
+		newFields = append(newFields, v)
+		keyToIndex[v.Key] = i
+		i++
+	}
+
+	return newFields
 }
