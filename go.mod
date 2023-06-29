@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/caarlos0/env/v6 v6.9.3
 	github.com/gin-gonic/gin v1.8.1
+	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.22.0
