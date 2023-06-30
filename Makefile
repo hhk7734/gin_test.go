@@ -18,7 +18,7 @@ remove_local:
 
 .PHONY: wire
 wire:
-	wire ./internal/user_interface/restapi
+	wire ./internal/ui/restapi
 
 .PHONY: test
 test:

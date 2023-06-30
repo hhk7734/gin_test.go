@@ -1,4 +1,4 @@
-package response
+package ui
 
 type RequestError struct {
 	Code    int    `json:"code"`
@@ -18,7 +18,7 @@ func (r ErrorResponse) Code(c int) ErrorResponse {
 }
 
 // //
-// http.StatusUnprocessableEntity
+// http.StatusBadRequest
 // //
 const (
 	_ int = iota
