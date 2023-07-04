@@ -1,4 +1,4 @@
-package ui
+package userinterface
 
 import (
 	"net/http"

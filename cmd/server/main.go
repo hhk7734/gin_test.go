@@ -12,7 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hhk7734/gin-test/internal/pkg/logger"
-	"github.com/hhk7734/gin-test/internal/ui"
+	"github.com/hhk7734/gin-test/internal/userinterface"
 	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )
@@ -37,9 +37,9 @@ func main() {
 	engin := gin.New()
 	engin.Use(lm.Logger)
 	engin.Use(lm.Recovery)
-	engin.Use((&ui.GinRequestIDMiddleware{}).RequestID(true))
+	engin.Use((&userinterface.GinRequestIDMiddleware{}).RequestID(true))
 
-	engin.GET("/healthz", (&ui.GinHealthzController{}).Healthz)
+	engin.GET("/healthz", (&userinterface.GinHealthzController{}).Healthz)
 
 	engin.StaticFile("/openapi.yaml", "web/static/openapi.yaml")
 

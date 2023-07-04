@@ -1,11 +1,11 @@
-package ui
+package userinterface
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/hhk7734/gin-test/internal/pkg/logger"
+	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )
 
@@ -30,7 +30,7 @@ func (r *GinRequestIDMiddleware) RequestID(generateIfNotExist bool) gin.HandlerF
 		c.Header("X-Request-Id", requestID)
 
 		ctx := c.Request.Context()
-		ctx = logger.WithFields(ctx, zap.String("request_id", requestID))
+		ctx = zapx.WithFields(ctx, zap.String("request_id", requestID))
 
 		c.Request = c.Request.WithContext(ctx)
 

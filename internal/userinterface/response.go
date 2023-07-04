@@ -1,4 +1,4 @@
-package ui
+package userinterface
 
 type RequestError struct {
 	Code    int    `json:"code"`
