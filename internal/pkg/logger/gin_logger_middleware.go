@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )
 
@@ -23,7 +24,7 @@ func (l *GinLoggerMiddleware) Logger(c *gin.Context) {
 
 	c.Next()
 
-	ctx := WithFields(c.Request.Context(),
+	ctx := zapx.WithFields(c.Request.Context(),
 		zap.String("method", c.Request.Method),
 		zap.String("url", path),
 		zap.Int("status", c.Writer.Status()),
@@ -31,13 +32,13 @@ func (l *GinLoggerMiddleware) Logger(c *gin.Context) {
 		zap.String("user_agent", c.Request.UserAgent()),
 		zap.Duration("latency", time.Since(start)))
 
-	log := Logger(ctx)
+	log := zapx.Ctx(ctx)
 
 	if c.Writer.Status() >= http.StatusInternalServerError || len(c.Errors) > 0 {
 		httpRequest, _ := httputil.DumpRequest(c.Request, false)
 		log.Error("internal server error", zap.String("request", string(httpRequest)))
 		for _, e := range c.Errors {
-			log.Error("internal server error", zap.Error(e))
+			log.Error("internal server error", zap.Error(e), zap.Any("meta", e.Meta))
 		}
 		return
 	}

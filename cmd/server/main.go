@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hhk7734/gin-test/internal/pkg/logger"
 	"github.com/hhk7734/gin-test/internal/ui"
+	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )
 
@@ -28,6 +29,8 @@ func main() {
 		}
 		workDir = filepath.Dir(workDir)
 	}
+
+	ctx := context.Background()
 
 	lm := &logger.GinLoggerMiddleware{}
 
@@ -60,23 +63,23 @@ func main() {
 
 	select {
 	case err := <-listenErr:
-		logger.Logger(context.Background()).Error("failed to listen and serve", zap.Error(err))
+		zapx.Ctx(ctx).Error("failed to listen and serve", zap.Error(err))
 	case <-shutdown:
 	}
 
-	logger.Logger(context.Background()).Info("shutting down server...")
+	zapx.Ctx(ctx).Info("shutting down server...")
 
 	wg := &sync.WaitGroup{}
 
 	go func() {
 		defer wg.Done()
 
-		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 		defer cancel()
 
 		// blocked until all connections are closed or timeout
 		if err := server.Shutdown(ctx); err != nil {
-			logger.Logger(context.Background()).Error("failed to shutdown server", zap.Error(err))
+			zapx.Ctx(ctx).Error("failed to shutdown server", zap.Error(err))
 		}
 	}()
 	wg.Add(1)
