@@ -1,4 +1,6 @@
-package userinterface
+package dto
+
+import "net/http"
 
 type RequestError struct {
 	Code    int    `json:"code"`
@@ -6,7 +8,8 @@ type RequestError struct {
 }
 
 type ErrorResponse struct {
-	Error RequestError `json:"error"`
+	Status int          `json:"status"`
+	Error  RequestError `json:"error"`
 }
 
 func (r ErrorResponse) Message(m string) ErrorResponse {
@@ -27,5 +30,5 @@ const (
 
 var (
 	// X-Request-Id 헤더가 없을 때 반환되는 에러
-	RequestIDRequiredResponse = ErrorResponse{Error: RequestError{Code: RequestIDRequired, Message: "X-Request-Id header is required"}}
+	RequestIDRequiredResponse = ErrorResponse{Status: http.StatusBadRequest, Error: RequestError{Code: RequestIDRequired, Message: "X-Request-Id header is required"}}
 )
