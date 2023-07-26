@@ -24,10 +24,10 @@ func main() {
 
 	ctx := context.Background()
 
-	lm := &logger.GinLoggerMiddleware{}
+	lm := &middleware.GinLoggerMiddleware{}
 
 	engin := gin.New()
-	engin.Use(lm.Logger)
+	engin.Use(lm.Logger([]string{"/healthz"}))
 	engin.Use(lm.Recovery)
 	engin.Use(middleware.GinRequestIDMiddleware(true))
 
