@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"sync"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hhk7734/gin-test/internal/pkg/env"
 	"github.com/hhk7734/gin-test/internal/pkg/logger"
 	"github.com/hhk7734/gin-test/internal/userinterface"
 	"github.com/hhk7734/zapx.go"
@@ -18,17 +18,8 @@ import (
 )
 
 func main() {
-	workDir, _ := os.Getwd()
-	for {
-		if _, err := os.Stat(workDir + "/.env"); err == nil {
-			os.Chdir(workDir)
-			break
-		}
-		if workDir == "/" {
-			break
-		}
-		workDir = filepath.Dir(workDir)
-	}
+	env.Load(".env")
+	logger.SetGlobalZapLogger()
 
 	ctx := context.Background()
 

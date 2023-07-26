@@ -10,6 +10,14 @@ make init
 
 ## Development
 
+```shell
+alias log2jq="jq -R -r '. as \$line | try fromjson catch \$line'"
+```
+
+```shell
+go run ./cmd/server 2>&1 | log2jq
+```
+
 ### Dependency
 
 새 패키지 추가

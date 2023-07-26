@@ -7,7 +7,7 @@ require (
 	github.com/cloudevents/sdk-go/v2 v2.12.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/uuid v1.3.0
-	github.com/hhk7734/zapx.go v0.2.0
+	github.com/hhk7734/zapx.go v0.5.0
 	github.com/joho/godotenv v1.4.0
 	go.uber.org/zap v1.24.0
 )
