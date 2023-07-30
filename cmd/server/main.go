@@ -25,13 +25,16 @@ func main() {
 	ctx := context.Background()
 
 	lm := &middleware.GinLoggerMiddleware{}
+	ratelimit := middleware.NewGinRateLimitMiddleware()
 
 	engin := gin.New()
 	engin.Use(lm.Logger([]string{"/healthz"}))
 	engin.Use(lm.Recovery)
 	engin.Use(middleware.GinRequestIDMiddleware(true))
 
-	engin.GET("/healthz", controller.GinHealthzController)
+	engin.GET("/healthz",
+		ratelimit.IPRateLimit("healthz", 20, 10*time.Second),
+		controller.GinHealthzController)
 
 	engin.StaticFile("/openapi.yaml", "web/static/openapi.yaml")
 
