@@ -26,7 +26,6 @@ func (r *GinRateLimitMiddleware) IPRateLimit(key string, limit int, window time.
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		ip := c.ClientIP()
-		fmt.Println(ip)
 		k := fmt.Sprintf("%s:%s", ip, key)
 		err := r.ratelimit.SlidingWindowLog(ctx, c.Writer, k, limit, window)
 		switch {
