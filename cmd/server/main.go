@@ -28,6 +28,7 @@ func main() {
 	ratelimit := middleware.NewGinRateLimitMiddleware()
 
 	engin := gin.New()
+	engin.RemoteIPHeaders = append([]string{"X-Envoy-External-Address"}, engin.RemoteIPHeaders...)
 	engin.Use(lm.Logger([]string{"/healthz"}))
 	engin.Use(lm.Recovery)
 	engin.Use(middleware.GinRequestIDMiddleware(true))
