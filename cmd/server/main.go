@@ -10,8 +10,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/hhk7734/gin-test/internal/pkg/env"
 	"github.com/hhk7734/gin-test/internal/pkg/logger"
+	"github.com/hhk7734/gin-test/internal/pkg/validator"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/controller"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/middleware"
 	"github.com/hhk7734/zapx.go"
@@ -21,6 +23,8 @@ import (
 func main() {
 	env.Load(".env")
 	logger.SetGlobalZapLogger()
+
+	binding.Validator = &validator.GinValidator{}
 
 	ctx := context.Background()
 
