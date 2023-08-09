@@ -7,26 +7,23 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
-func NewUser(emailAddress string) (*User, error) {
-	u := &User{
+type User struct {
+	ID           ulid.ULID
+	EmailAddress string `validate:"required,email,max=255"`
+	FirstName    string `validate:"required,max=255"`
+	LastName     string `validate:"required,max=255"`
+	PhoneNumber  string `validate:"omitempty,e164"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func NewUser(emailAddress string) *User {
+	return &User{
 		ID:           ulid.Make(),
 		EmailAddress: emailAddress,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
-
-	if err := u.Validate(); err != nil {
-		return nil, err
-	}
-
-	return u, nil
-}
-
-type User struct {
-	ID           ulid.ULID
-	EmailAddress string `validate:"required,email"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
 }
 
 func (u *User) Validate() error {

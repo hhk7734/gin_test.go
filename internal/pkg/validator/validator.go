@@ -7,6 +7,10 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type ValidationErrors = validator.ValidationErrors
+type InvalidValidationError = validator.InvalidValidationError
+type FieldError = validator.FieldError
+
 var Validator = validator.New()
 
 var _ binding.StructValidator = &GinValidator{}
