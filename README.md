@@ -5,7 +5,7 @@ asdf 설치
 https://asdf-vm.com/guide/getting-started.html
 
 ```shell
-make init
+make tidy
 ```
 
 ## Development
@@ -23,7 +23,7 @@ go run ./cmd/server 2>&1 | log2jq
 새 패키지 추가
 
 ```shell
-make init
+make tidy
 ```
 
 새 의존성 주입 추가
