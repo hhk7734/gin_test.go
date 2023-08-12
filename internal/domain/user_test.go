@@ -9,13 +9,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/hhk7734/gin-test/internal/domain"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
-func TestUserValidate(t *testing.T) {
+func TestUserShouldValid(t *testing.T) {
+	// Given
 	cases := []struct {
-		User         *domain.User
-		InvalidCount int
+		User *domain.User
 	}{
 		{
 			User: &domain.User{
@@ -24,8 +23,25 @@ func TestUserValidate(t *testing.T) {
 				LastName:     "test",
 				PhoneNumber:  "+821012345678",
 			},
-			InvalidCount: 0,
 		},
+	}
+
+	for i, c := range cases {
+		// When
+		err := c.User.Validate()
+
+		// Then
+		msg := fmt.Sprintf("case: %d", i)
+		assert.NoError(t, err, msg)
+	}
+}
+
+func TestInvalidUserShouldReturnOnlyValidationErrors(t *testing.T) {
+	// Given
+	cases := []struct {
+		User         *domain.User
+		InvalidCount int
+	}{
 		{
 			User:         &domain.User{},
 			InvalidCount: 3,
@@ -42,21 +58,14 @@ func TestUserValidate(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		msg := fmt.Sprintf("case: %d", i)
+		// When
 		err := c.User.Validate()
-		ierr := &validator.InvalidValidationError{}
-		verr := &validator.ValidationErrors{}
-		switch {
-		case errors.As(err, verr):
-			assert.Equal(t, c.InvalidCount, len(*verr), msg)
-		case errors.As(err, &ierr):
-			require.Fail(t, "do not allow InvalidValidationError")
-		case err == nil:
-			if c.InvalidCount != 0 {
-				assert.Equal(t, c.InvalidCount, 0, msg)
-			}
-		case err != nil:
-			assert.NoError(t, err, msg)
+
+		// Then
+		msg := fmt.Sprintf("case: %d", i)
+		verr := validator.ValidationErrors{}
+		if assert.True(t, errors.As(err, &verr), msg) {
+			assert.Len(t, verr, c.InvalidCount, msg)
 		}
 	}
 }
