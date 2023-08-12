@@ -2,33 +2,31 @@ package dto
 
 import "net/http"
 
-type RequestError struct {
+type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"msg"`
 }
 
 type ErrorResponse struct {
-	Status int          `json:"status"`
-	Error  RequestError `json:"error"`
-}
-
-func (r ErrorResponse) Message(m string) ErrorResponse {
-	return ErrorResponse{Error: RequestError{Code: r.Error.Code, Message: m}}
-}
-
-func (r ErrorResponse) Code(c int) ErrorResponse {
-	return ErrorResponse{Error: RequestError{Code: c, Message: r.Error.Message}}
+	Status int     `json:"status"`
+	Errors []Error `json:"error"`
 }
 
 // //
 // http.StatusBadRequest
 // //
 const (
-	_ int = iota
+	BadRequest = iota
 	RequestIDRequired
 )
 
 var (
+	BadRequestResponse = ErrorResponse{Status: http.StatusBadRequest, Errors: []Error{
+		{Code: BadRequest, Message: "bad request"},
+	}}
+
 	// X-Request-Id 헤더가 없을 때 반환되는 에러
-	RequestIDRequiredResponse = ErrorResponse{Status: http.StatusBadRequest, Error: RequestError{Code: RequestIDRequired, Message: "X-Request-Id header is required"}}
+	RequestIDRequiredResponse = ErrorResponse{Status: http.StatusBadRequest, Errors: []Error{
+		{Code: RequestIDRequired, Message: "X-Request-Id header is required"},
+	}}
 )

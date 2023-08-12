@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/dto"
@@ -21,7 +19,7 @@ func GinRequestIDMiddleware(generateIfNotExist bool) gin.HandlerFunc {
 				requestID = uuid.New().String()
 				c.Request.Header.Set("X-Request-Id", requestID)
 			} else {
-				c.AbortWithStatusJSON(http.StatusBadRequest, dto.RequestIDRequiredResponse)
+				c.AbortWithStatusJSON(dto.RequestIDRequiredResponse.Status, dto.RequestIDRequiredResponse)
 				return
 			}
 		}
