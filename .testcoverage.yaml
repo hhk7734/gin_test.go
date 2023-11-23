@@ -1,0 +1,9 @@
+profile: cover.out
+local-prefix: "github.com/hhk7734/git_test.go"
+threshold:
+  file: 50
+  package: 50
+  total: 50
+exclude:
+  paths:
+    - \.pb\.go$ # excludes all protobuf generated files
