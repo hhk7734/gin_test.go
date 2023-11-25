@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net"
 	"net/http"
 	"os/signal"
 	"sync"
@@ -51,6 +52,7 @@ func run() (err error) {
 
 	server := &http.Server{
 		Addr:         ":8080",
+		BaseContext:  func(_ net.Listener) context.Context { return ctx },
 		Handler:      engin,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
