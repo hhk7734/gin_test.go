@@ -14,4 +14,6 @@ COPY --from=build /app/app /usr/bin/
 
 EXPOSE 8080
 ENV PORT 8080
+ENV GIN_MODE release
+
 CMD ["app"]
