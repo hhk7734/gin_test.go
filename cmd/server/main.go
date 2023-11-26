@@ -16,7 +16,6 @@ import (
 	"github.com/hhk7734/gin-test/internal/pkg/validator"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/controller"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/middleware"
-	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )
 
@@ -63,11 +62,11 @@ func main() {
 
 	select {
 	case err := <-listenErr:
-		zapx.Ctx(ctx).Error("failed to listen and serve", zap.Error(err))
+		zap.L().Error("failed to listen and serve", zap.Error(err))
 	case <-shutdown:
 	}
 
-	zapx.Ctx(ctx).Info("shutting down server...")
+	zap.L().Info("shutting down server...")
 
 	wg := &sync.WaitGroup{}
 
@@ -79,7 +78,7 @@ func main() {
 
 		// blocked until all connections are closed or timeout
 		if err := server.Shutdown(ctx); err != nil {
-			zapx.Ctx(ctx).Error("failed to shutdown server", zap.Error(err))
+			zap.L().Error("failed to shutdown server", zap.Error(err))
 		}
 	}()
 	wg.Add(1)
