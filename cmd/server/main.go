@@ -1,21 +1,14 @@
 package main
 
 import (
-	"context"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/hhk7734/gin-test/internal/pkg/env"
 	"github.com/hhk7734/gin-test/internal/pkg/logger"
-	"github.com/hhk7734/gin-test/internal/pkg/validator"
-	"github.com/hhk7734/gin-test/internal/userinterface/gin/controller"
-	"github.com/hhk7734/gin-test/internal/userinterface/gin/middleware"
+	"github.com/hhk7734/gin-test/internal/userinterface/gin"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -33,41 +26,17 @@ func main() {
 	viper.AutomaticEnv()
 
 	pflag.String("log_level", "info", "log level")
+	viper.BindPFlags(pflag.CommandLine)
 
 	pflag.Parse()
-	viper.BindPFlags(pflag.CommandLine)
 
 	logger.SetGlobalZapLogger(logger.LogConfig{Level: viper.GetString("log_level")})
 
-	env.Load(".env")
-	binding.Validator = &validator.GinValidator{}
-
-	lm := &middleware.GinLoggerMiddleware{}
-	ratelimit := middleware.NewGinRateLimitMiddleware()
-
-	engin := gin.New()
-	engin.RemoteIPHeaders = append([]string{"X-Envoy-External-Address"}, engin.RemoteIPHeaders...)
-	engin.Use(lm.Logger([]string{"/healthz"}))
-	engin.Use(lm.Recovery)
-	engin.Use(middleware.GinRequestIDMiddleware(true))
-
-	engin.GET("/healthz",
-		ratelimit.IPRateLimit("healthz", 20, 10*time.Second),
-		controller.GinHealthzController)
-
-	engin.StaticFile("/openapi.yaml", "web/static/openapi.yaml")
-
-	server := &http.Server{
-		Addr:         ":8080",
-		Handler:      engin,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-	}
+	server := gin.NewGinRestAPI()
 
 	listenErr := make(chan error, 1)
-
 	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.Run(); err != nil && err != http.ErrServerClosed {
 			listenErr <- err
 		}
 	}()
@@ -87,12 +56,8 @@ func main() {
 
 	go func() {
 		defer wg.Done()
-
-		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-		defer cancel()
-
 		// blocked until all connections are closed or timeout
-		if err := server.Shutdown(ctx); err != nil {
+		if err := server.Shutdown(); err != nil {
 			zap.L().Error("failed to shutdown server", zap.Error(err))
 		}
 	}()
