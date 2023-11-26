@@ -5,6 +5,10 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	LOG_LEVEL_KEY = "log_level"
+)
+
 type LogConfig struct {
 	Level string
 }

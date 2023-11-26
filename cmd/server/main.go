@@ -25,12 +25,12 @@ func main() {
 
 	viper.AutomaticEnv()
 
-	pflag.String("log_level", "info", "log level")
+	pflag.String(logger.LOG_LEVEL_KEY, "info", "log level")
 	viper.BindPFlags(pflag.CommandLine)
 
 	pflag.Parse()
 
-	logger.SetGlobalZapLogger(logger.LogConfig{Level: viper.GetString("log_level")})
+	logger.SetGlobalZapLogger(logger.LogConfig{Level: viper.GetString(logger.LOG_LEVEL_KEY)})
 
 	server := gin.NewGinRestAPI()
 
