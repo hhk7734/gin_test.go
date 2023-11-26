@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"os"
 	"os/signal"
 	"sync"
 	"syscall"
@@ -20,19 +21,12 @@ import (
 )
 
 func main() {
-	if err := run(); err != nil {
-		panic(err)
-	}
-}
-
-func run() (err error) {
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
-
 	env.Load(".env")
 	logger.SetGlobalZapLogger()
 
 	binding.Validator = &validator.GinValidator{}
+
+	ctx := context.Background()
 
 	lm := &middleware.GinLoggerMiddleware{}
 	ratelimit := middleware.NewGinRateLimitMiddleware()
@@ -64,11 +58,13 @@ func run() (err error) {
 		}
 	}()
 
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
+
 	select {
 	case err := <-listenErr:
 		zapx.Ctx(ctx).Error("failed to listen and serve", zap.Error(err))
-	case <-ctx.Done():
-		stop()
+	case <-shutdown:
 	}
 
 	zapx.Ctx(ctx).Info("shutting down server...")
@@ -89,6 +85,4 @@ func run() (err error) {
 	wg.Add(1)
 
 	wg.Wait()
-
-	return
 }
