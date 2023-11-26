@@ -25,8 +25,6 @@ func main() {
 
 	binding.Validator = &validator.GinValidator{}
 
-	ctx := context.Background()
-
 	lm := &middleware.GinLoggerMiddleware{}
 	ratelimit := middleware.NewGinRateLimitMiddleware()
 
@@ -73,7 +71,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 
-		ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
 
 		// blocked until all connections are closed or timeout
