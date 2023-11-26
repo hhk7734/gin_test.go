@@ -1,21 +1,18 @@
 package logger
 
 import (
-	"os"
-
 	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )
 
-func SetGlobalZapLogger() {
-	level, ok := os.LookupEnv("LOG_LEVEL")
-	if !ok {
-		level = "info"
-	}
+type LogConfig struct {
+	Level string
+}
 
+func SetGlobalZapLogger(cfg LogConfig) {
 	var l *zap.Logger
 	zapCfg := zap.NewProductionConfig()
-	err := zapCfg.Level.UnmarshalText([]byte(level))
+	err := zapCfg.Level.UnmarshalText([]byte(cfg.Level))
 	if err != nil {
 		panic(err)
 	}
@@ -24,5 +21,5 @@ func SetGlobalZapLogger() {
 	defer l.Sync()
 	zap.ReplaceGlobals(l)
 
-	zap.L().Info("logger config", zapx.Dict("config", zap.String("level", level)))
+	zap.L().Info("logger config", zapx.Dict("config", zap.String("level", cfg.Level)))
 }

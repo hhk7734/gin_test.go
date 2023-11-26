@@ -16,13 +16,30 @@ import (
 	"github.com/hhk7734/gin-test/internal/pkg/validator"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/controller"
 	"github.com/hhk7734/gin-test/internal/userinterface/gin/middleware"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
 func main() {
-	env.Load(".env")
-	logger.SetGlobalZapLogger()
+	viper.SetConfigName(".env")
+	viper.SetConfigType("dotenv")
 
+	// TODO: find .env file from parent directory recursively
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("..")
+	viper.AddConfigPath("../..")
+
+	viper.AutomaticEnv()
+
+	pflag.String("log_level", "info", "log level")
+
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
+	logger.SetGlobalZapLogger(logger.LogConfig{Level: viper.GetString("log_level")})
+
+	env.Load(".env")
 	binding.Validator = &validator.GinValidator{}
 
 	lm := &middleware.GinLoggerMiddleware{}
