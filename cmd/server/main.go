@@ -43,8 +43,6 @@ func main() {
 
 	// flag
 	pflag.CommandLine.AddFlagSet(logger.LogPFlags())
-
-	pflag.String(logger.LOG_LEVEL_KEY, "info", "log level")
 	pflag.Parse()
 
 	viper.BindPFlags(pflag.CommandLine)
