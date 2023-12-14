@@ -18,6 +18,7 @@ import (
 )
 
 func main() {
+	// .env file
 	viper.SetConfigName(".env")
 	viper.SetConfigType("dotenv")
 
@@ -37,14 +38,18 @@ func main() {
 		panic(fmt.Errorf("failed to read config file: %w", err))
 	}
 
+	// env
 	viper.AutomaticEnv()
 
-	pflag.String(logger.LOG_LEVEL_KEY, "info", "log level")
-	viper.BindPFlags(pflag.CommandLine)
+	// flag
+	pflag.CommandLine.AddFlagSet(logger.LogPFlags())
 
+	pflag.String(logger.LOG_LEVEL_KEY, "info", "log level")
 	pflag.Parse()
 
-	logger.SetGlobalZapLogger(logger.LogConfig{Level: viper.GetString(logger.LOG_LEVEL_KEY)})
+	viper.BindPFlags(pflag.CommandLine)
+
+	logger.SetGlobalZapLogger(logger.LogConfigFromViper())
 
 	server := gin.NewGinRestAPI()
 

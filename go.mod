@@ -3,17 +3,16 @@ module github.com/hhk7734/gin-test
 go 1.20
 
 require (
-	github.com/caarlos0/env/v6 v6.9.3
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/google/uuid v1.3.0
 	github.com/hhk7734/ratelimit.go v0.1.0
 	github.com/hhk7734/zapx.go v0.5.0
-	github.com/joho/godotenv v1.4.0
 	github.com/oklog/ulid/v2 v2.1.0
+	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
-	go.uber.org/zap v1.24.0
+	go.uber.org/zap v1.26.0
 )
 
 require (
@@ -43,7 +42,6 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.10.0 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
