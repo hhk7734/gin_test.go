@@ -31,26 +31,26 @@ func (l *GinLoggerMiddleware) Logger(skipPaths []string) gin.HandlerFunc {
 		c.Next()
 
 		if _, ok := skip[path]; !ok {
+			status := c.Writer.Status()
 			ctx := zapx.WithFields(c.Request.Context(),
 				zap.String("method", c.Request.Method),
 				zap.String("url", path),
-				zap.Int("status", c.Writer.Status()),
+				zap.Int("status", status),
 				zap.String("remote_address", c.ClientIP()),
 				zap.String("user_agent", c.Request.UserAgent()),
 				zap.Duration("latency", time.Since(start)))
+			logger := zapx.Ctx(ctx)
 
-			log := zapx.Ctx(ctx)
-
-			if c.Writer.Status() >= http.StatusInternalServerError || len(c.Errors) > 0 {
+			if status < http.StatusInternalServerError {
+				logger.Info("request")
+			} else {
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
-				log.Error("internal server error", zap.String("request", string(httpRequest)))
-				for _, e := range c.Errors {
-					log.Error("internal server error", zap.Error(e), zap.Any("meta", e.Meta))
-				}
-				return
+				logger.Error("request", zap.String("request", string(httpRequest)))
 			}
 
-			log.Info("request")
+			for _, e := range c.Errors {
+				logger.Error("unknown error", zap.Error(e))
+			}
 		}
 
 	}
@@ -69,12 +69,13 @@ func (l *GinLoggerMiddleware) Recovery(c *gin.Context) {
 			}
 
 			if brokenPipe {
-				c.Error(err.(error))
+				zapx.Ctx(c.Request.Context()).Warn("broken pipe", zap.Error(err.(error)))
 				c.Abort()
 				return
 			}
 
-			c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("%v\n%s", err, string(debug.Stack())))
+			zapx.Ctx(c.Request.Context()).Error("internal server error", zap.Error(fmt.Errorf("%v\n%s", err, string(debug.Stack()))))
+			c.AbortWithStatus(http.StatusInternalServerError)
 		}
 	}()
 
