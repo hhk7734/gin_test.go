@@ -1,9 +1,12 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sync"
 	"syscall"
 
@@ -18,10 +21,21 @@ func main() {
 	viper.SetConfigName(".env")
 	viper.SetConfigType("dotenv")
 
-	// TODO: find .env file from parent directory recursively
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("..")
-	viper.AddConfigPath("../..")
+	workDir, _ := os.Getwd()
+	for {
+		if _, err := os.Stat(filepath.Join(workDir, ".env")); err == nil {
+			viper.AddConfigPath(workDir)
+			break
+		}
+		if workDir == "/" {
+			break
+		}
+		workDir = filepath.Dir(workDir)
+	}
+
+	if err := viper.ReadInConfig(); err != nil && !errors.As(err, &viper.ConfigFileNotFoundError{}) {
+		panic(fmt.Errorf("failed to read config file: %w", err))
+	}
 
 	viper.AutomaticEnv()
 
