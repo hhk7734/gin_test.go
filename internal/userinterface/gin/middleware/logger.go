@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -74,8 +76,13 @@ func (l *GinLoggerMiddleware) Recovery(c *gin.Context) {
 				return
 			}
 
-			zapx.Ctx(c.Request.Context()).Error("internal server error", zap.Error(fmt.Errorf("%v\n%s", err, string(debug.Stack()))))
-			c.AbortWithStatus(http.StatusInternalServerError)
+			if err2, ok := err.(error); ok && errors.Is(err2, context.Canceled) {
+				zapx.Ctx(c.Request.Context()).Warn("request canceled", zap.Error(err.(error)))
+				c.Abort()
+				return
+			}
+
+			c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("%v\n%s", err, string(debug.Stack())))
 		}
 	}()
 
