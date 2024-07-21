@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/hhk7734/gin-test/internal/pkg/validator"
+	"github.com/hhk7734/gin_test.go/internal/pkg/validator"
 	"github.com/oklog/ulid/v2"
 )
 

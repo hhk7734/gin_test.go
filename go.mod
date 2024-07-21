@@ -1,4 +1,4 @@
-module github.com/hhk7734/gin-test
+module github.com/hhk7734/gin_test.go
 
 go 1.20
 

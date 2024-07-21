@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/hhk7734/gin-test/internal/domain"
+	"github.com/hhk7734/gin_test.go/internal/domain"
 	"github.com/stretchr/testify/assert"
 )
 

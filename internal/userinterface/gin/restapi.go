@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/hhk7734/gin-test/internal/pkg/validator"
-	"github.com/hhk7734/gin-test/internal/userinterface/gin/controller"
-	"github.com/hhk7734/gin-test/internal/userinterface/gin/middleware"
+	"github.com/hhk7734/gin_test.go/internal/pkg/validator"
+	"github.com/hhk7734/gin_test.go/internal/userinterface/gin/controller"
+	"github.com/hhk7734/gin_test.go/internal/userinterface/gin/middleware"
 )
 
 func init() {

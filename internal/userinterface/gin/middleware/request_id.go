@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/hhk7734/gin-test/internal/userinterface/gin/dto"
+	"github.com/hhk7734/gin_test.go/internal/userinterface/gin/dto"
 	"github.com/hhk7734/zapx.go"
 	"go.uber.org/zap"
 )

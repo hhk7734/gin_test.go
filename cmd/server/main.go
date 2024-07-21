@@ -10,8 +10,8 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/hhk7734/gin-test/internal/pkg/logger"
-	"github.com/hhk7734/gin-test/internal/userinterface/gin"
+	"github.com/hhk7734/gin_test.go/internal/pkg/logger"
+	"github.com/hhk7734/gin_test.go/internal/userinterface/gin"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
