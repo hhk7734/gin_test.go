@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"sync"
 	"syscall"
 
@@ -21,18 +20,7 @@ func main() {
 	// .env file
 	viper.SetConfigName(".env")
 	viper.SetConfigType("dotenv")
-
-	workDir, _ := os.Getwd()
-	for {
-		if _, err := os.Stat(filepath.Join(workDir, ".env")); err == nil {
-			viper.AddConfigPath(workDir)
-			break
-		}
-		if workDir == "/" {
-			break
-		}
-		workDir = filepath.Dir(workDir)
-	}
+	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil && !errors.As(err, &viper.ConfigFileNotFoundError{}) {
 		panic(fmt.Errorf("failed to read config file: %w", err))

@@ -1,12 +1,13 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch Server",
-            "type": "go",
-            "program": "cmd/server",
-            "request": "launch",
-            "mode": "debug"
-        },
-    ]
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Server",
+			"type": "go",
+			"program": "./cmd/server",
+			"cwd": "${workspaceFolder}",
+			"request": "launch",
+			"mode": "auto"
+		}
+	]
 }

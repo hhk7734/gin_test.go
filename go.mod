@@ -1,6 +1,6 @@
 module github.com/hhk7734/gin_test.go
 
-go 1.20
+go 1.21
 
 require (
 	github.com/gin-gonic/gin v1.8.1
